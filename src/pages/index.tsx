@@ -5,22 +5,63 @@ import styles from '@/styles/Home.module.scss'
 import { Grid } from '../game/Grid';
 import { Cell } from "../game/Cell";
 
+interface MouseEvenCoords {
+    x: number,
+    y: number
+}
+
+interface MouseKeyboardKeyEvent {
+    key: string;
+}
+
 export default function Home() {
 
     const grid = new Grid()
     const boardRef = useRef<HTMLDivElement>();
+    const mouseEventCoords = useRef<MouseEvenCoords>({ x: 0, y: 0 });
 
     useEffect(() => {
 
-        window.addEventListener('keydown', onKeyPress)
+        window.s
+
+        window.addEventListener('keydown', onKeyPress);
+        window.addEventListener('touchstart', onMouseDown);
+        window.addEventListener('touchend', onMouseUp);
         grid.getRandomEmptyCell().linkTile(boardRef.current)
 
-        return () => window.removeEventListener('keydown', onKeyPress)
+        return () => {
+            window.removeEventListener('keydown', onKeyPress)
+            window.removeEventListener('touchstart', onMouseDown)
+            window.removeEventListener('touchend', onMouseUp)
+        }
 
 
     }, [])
 
-    const onKeyPress = async (e: KeyboardEvent) => {
+    const onMouseDown = (e: TouchEvent) => {
+        mouseEventCoords.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    const onMouseUp = (e: TouchEvent) => {
+        const xNew = e.changedTouches[0].clientX;
+        const yNew = e.changedTouches[0].clientY;
+
+        console.log(mouseEventCoords.current.y)
+        console.log(yNew)
+
+        if (mouseEventCoords.current.x < xNew && Math.abs(mouseEventCoords.current.y - yNew) < 100) {
+            onKeyPress({ key: "ArrowRight" })
+        } else if (mouseEventCoords.current.x > xNew && Math.abs(mouseEventCoords.current.y - yNew) < 100) {
+            onKeyPress({ key: "ArrowLeft" })
+        } else if (mouseEventCoords.current.y > yNew && Math.abs(mouseEventCoords.current.x - xNew) < 100) {
+            onKeyPress({ key: "ArrowUp" })
+        } else if (mouseEventCoords.current.y < yNew && Math.abs(mouseEventCoords.current.x - xNew) < 100) {
+            onKeyPress({ key: "ArrowDown" })
+        }
+
+        mouseEventCoords.current = { x: 0, y: 0 }
+    }
+
+    const onKeyPress = async (e: KeyboardEvent | MouseKeyboardKeyEvent) => {
         switch (e.key) {
             case "ArrowUp":
                 if (!canMoveUp()) {
@@ -110,7 +151,6 @@ export default function Home() {
             promises.push(cellWithTile.linkedTile?.waitForTransitionEnd());
 
             if (targetCell.isEmpty()) {
-                console.log(1)
                 targetCell.linkTile(null, cellWithTile.linkedTile);
             } else {
                 targetCell.linkTileForMerge(cellWithTile.linkedTile);

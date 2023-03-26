@@ -13,14 +13,11 @@ export class Cell {
 
     linkTile(boardRef: HTMLDivElement | null, tileL: Tile | null = null) {
         let tile: Tile;
-
         if (boardRef) {
-            console.log(boardRef)
             tile = new Tile(boardRef);
         } else if (tileL) {
             tile = tileL;
         }
-        // const tile = new Tile(boardRef)
         tile.setXY(this.x, this.y);
         this.linkedTile = tile;
         return this.linkedTile;

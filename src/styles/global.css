@@ -5,4 +5,5 @@ body {
     min-width: 310px;
     background-color: #353333;
     font-size: 4vmin;
+    overflow: hidden;
 }
