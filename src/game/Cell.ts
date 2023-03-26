@@ -6,20 +6,25 @@ export class Cell {
     public linkedTile: Tile | null;
     public linkedTileForMerge: Tile | null;
 
-    constructor(x, y) {
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
+
+        this.linkedTile = null;
+        this.linkedTileForMerge = null;
     }
 
     linkTile(boardRef: HTMLDivElement | null, tileL: Tile | null = null) {
-        let tile: Tile;
+        let tile: Tile | null = null;
         if (boardRef) {
             tile = new Tile(boardRef);
         } else if (tileL) {
             tile = tileL;
         }
-        tile.setXY(this.x, this.y);
-        this.linkedTile = tile;
+        if (tile) {
+            tile.setXY(this.x, this.y);
+            this.linkedTile = tile;
+        }
         return this.linkedTile;
     }
 
@@ -31,8 +36,8 @@ export class Cell {
         return !this.linkedTile;
     }
 
-    linkTileForMerge(tile) {
-        tile.setXY(this.x, this.y);
+    linkTileForMerge(tile: Tile | null) {
+        tile?.setXY(this.x, this.y);
         this.linkedTileForMerge = tile;
     }
 
@@ -44,16 +49,21 @@ export class Cell {
         return !!this.linkedTileForMerge;
     }
 
-    canAccept(newTile) {
+    canAccept(newTile: Tile | null) {
         return (
             this.isEmpty() ||
-            (!this.hasTileForMerge() && this.linkedTile?.value === newTile.value)
+            (!this.hasTileForMerge() && this.linkedTile?.value === newTile?.value)
         );
     }
 
     mergeTiles() {
-        this.linkedTile?.setValue(this.linkedTile?.value + this.linkedTileForMerge?.value);
-        this.linkedTileForMerge?.remove();
-        this.unlinkTileForMerge();
+        if (this.linkedTileForMerge) {
+            this.linkedTile?.setValue(this.linkedTile?.value + this.linkedTileForMerge?.value);
+            this.linkedTileForMerge?.remove();
+            this.unlinkTileForMerge();
+        }
     }
 }
+
+
+export const CellType = typeof Cell;

@@ -17,13 +17,11 @@ interface MouseKeyboardKeyEvent {
 export default function Home() {
 
     const grid = new Grid()
-    const boardRef = useRef<HTMLDivElement>();
+    const boardRef = useRef<HTMLDivElement>(null);
     const mouseEventCoords = useRef<MouseEvenCoords>({ x: 0, y: 0 });
 
     useEffect(() => {
-
-        window.s
-
+        if (!boardRef.current) return;
         window.addEventListener('keydown', onKeyPress);
         window.addEventListener('touchstart', onMouseDown);
         window.addEventListener('touchend', onMouseUp);
@@ -91,11 +89,12 @@ export default function Home() {
                 return;
         }
 
+        if (!boardRef.current) return;
         const newTile = grid.getRandomEmptyCell().linkTile(boardRef.current)
 
 
         if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
-            await newTile.waitForAnimationEnd();
+            await newTile?.waitForAnimationEnd();
             alert("Try again!")
             return;
         }
@@ -118,8 +117,8 @@ export default function Home() {
         await slideTiles(grid.cellsGroupedByReversedRow);
     }
 
-    async function slideTiles(groupedCells) {
-        const promises = [];
+    async function slideTiles(groupedCells: Cell[][]) {
+        const promises: any = [];
 
         groupedCells.forEach(group => slideTilesInGroup(group, promises));
 
@@ -129,7 +128,7 @@ export default function Home() {
         });
     }
 
-    function slideTilesInGroup(group: Cell[], promises) {
+    function slideTilesInGroup(group: Cell[], promises: any) {
         for (let i = 1; i < group.length; i++) {
             if (group[i].isEmpty()) {
                 continue;
@@ -176,11 +175,11 @@ export default function Home() {
         return canMove(grid.cellsGroupedByReversedRow);
     }
 
-    function canMove(groupedCells) {
+    function canMove(groupedCells: Cell[][]) {
         return groupedCells.some(group => canMoveInGroup(group));
     }
 
-    function canMoveInGroup(group) {
+    function canMoveInGroup(group: Cell[]) {
         return group.some((cell, index) => {
             if (index === 0) {
                 return false;
@@ -198,31 +197,11 @@ export default function Home() {
     return (
         <div className={styles.wrapper}>
             <div className={styles.gameBoard} ref={boardRef}>
-
                 {
                     grid.cells.map((_obj,i) =>
                         <div className={styles.cell} key={i}/>
                     )
                 }
-
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-                {/*<div className={styles.cell}/>*/}
-
-                {/*<div className={styles.tile}>2</div>*/}
             </div>
         </div>
     )

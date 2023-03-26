@@ -1,13 +1,13 @@
-import { Cell } from "./cell";
+import { Cell } from "./Cell";
 
 const GRID_SIZE = 4;
 const CELLS_COUNT = GRID_SIZE * GRID_SIZE;
 
 export class Grid {
     public cells: Cell[];
-    public cellsGroupedByColumn: Cell[];
+    public cellsGroupedByColumn: Cell[][];
     public cellsGroupedByReversedColumn: Cell[][];
-    public cellsGroupedByRow: Cell[];
+    public cellsGroupedByRow: Cell[][];
     public cellsGroupedByReversedRow: Cell[][];
 
     constructor() {
@@ -29,7 +29,7 @@ export class Grid {
     }
 
     groupCellsByColumn() {
-        return this.cells.reduce((groupedCells, cell) => {
+        return this.cells.reduce((groupedCells: Cell[][], cell) => {
             groupedCells[cell.x] = groupedCells[cell.x] || [];
             groupedCells[cell.x][cell.y] = cell;
             return groupedCells;
@@ -37,7 +37,7 @@ export class Grid {
     }
 
     groupCellsByRow() {
-        return this.cells.reduce((groupedCells, cell) => {
+        return this.cells.reduce((groupedCells: Cell[][], cell) => {
             groupedCells[cell.y] = groupedCells[cell.y] || [];
             groupedCells[cell.y][cell.x] = cell;
             return groupedCells;
